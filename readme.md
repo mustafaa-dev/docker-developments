@@ -32,10 +32,5 @@ docker run --name redis-container -d -p 6379:6379 -v redis-data:/data redis
 
 # Installing Mailpit
 ```bash
-docker run -d \
---restart unless-stopped \
---name=mailpit \
--p 8025:8025 \
--p 1025:1025 \
-axllent/mailpit
+docker run -d --name=mailpit-container -p 8025:8025 -p 1025:1025 axllent/mailpit
 ```

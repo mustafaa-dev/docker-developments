@@ -1,4 +1,4 @@
-# Creating new network
+# Creating New Network
 
 ```bash
 docker network create mynetwork
@@ -24,7 +24,7 @@ docker run -d --name pgadmin-container --network mynetwork -e PGADMIN_DEFAULT_EM
 ```
 
 
-# Installing Docker 
+# Installing Redis 
 ```bash
 docker run --name redis-container -d -p 6379:6379 -v redis-data:/data redis
 ```

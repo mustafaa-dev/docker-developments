@@ -34,3 +34,7 @@ docker run --name redis-container -d -p 6379:6379 -v redis-data:/data redis
 ```bash
 docker run -d --name=mailpit-container -p 8025:8025 -p 1025:1025 axllent/mailpit
 ```
+# Installing MongoDB
+```bash
+docker run --name mongodb -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=toor mongo
+```

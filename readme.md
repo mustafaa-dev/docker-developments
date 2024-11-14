@@ -16,7 +16,7 @@ docker run -d --name phpmyadmin-container --network mynetwork -e PMA_HOST=mysql-
 
 # Installing PostGres and PGAdmin
 ```bash
-docker run -d --name postgres-container --network mynetwork -e POSTGRES_PASSWORD=yourpassword -p 5432:5432 postgres:latest
+docker run -d --name postgres-container --network mynetwork -e POSTGRES_PASSWORD=toor -p 5432:5432 postgres:latest
 ```
 
 ```bash
@@ -29,6 +29,10 @@ docker run -d --name pgadmin-container --network mynetwork -e PGADMIN_DEFAULT_EM
 docker run --name redis-container -d -p 6379:6379 -v redis-data:/data redis
 ```
 
+```bash
+docker run -d --name redisinsight -p 8001:8001 redis/redisinsight:latest
+```
+
 
 # Installing Mailpit
 ```bash
@@ -37,4 +41,9 @@ docker run -d --name=mailpit-container -p 8025:8025 -p 1025:1025 axllent/mailpit
 # Installing MongoDB
 ```bash
 docker run --name mongodb -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=toor mongo
+```
+
+# MinIO
+```bash
+docker run -p 9002:9000 -p 9001:9001 --name minio -e "MINIO_ROOT_USER=minioadmin" -e "MINIO_ROOT_PASSWORD=minioadmin" minio/minio server /data --console-address ":9001"
 ```

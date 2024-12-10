@@ -26,11 +26,7 @@ docker run -d --name pgadmin-container --network mynetwork -e PGADMIN_DEFAULT_EM
 
 # Installing Redis 
 ```bash
-docker run --name redis-container -d -p 6379:6379 -v redis-data:/data redis
-```
-
-```bash
-docker run -d --name redisinsight -p 8001:8001 redis/redisinsight:latest
+docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
 ```
 
 
@@ -38,9 +34,15 @@ docker run -d --name redisinsight -p 8001:8001 redis/redisinsight:latest
 ```bash
 docker run -d --name=mailpit-container -p 8025:8025 -p 1025:1025 axllent/mailpit
 ```
+
 # Installing MongoDB
 ```bash
 docker run --name mongodb -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=toor mongo
+```
+
+# Installing MSSQL
+```base
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=toor" -p 1433:1433 --name sqlserver-container -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 
 # MinIO

@@ -42,7 +42,7 @@ docker run --name mongodb -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -
 
 # Installing MSSQL
 ```base
-docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=toor" -p 1433:1433 --name sqlserver-container -d mcr.microsoft.com/mssql/server:2022-latest
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourStrongPassword123" -p 1433:1433 --name mssql-server -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 
 # MinIO

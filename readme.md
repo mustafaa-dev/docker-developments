@@ -27,46 +27,46 @@ docker network create mynetwork
 
 # Installing MySQL and PHPMyAdmin
 ```bash
-docker run -d --name mysql-container --network mynetwork -e MYSQL_ROOT_PASSWORD=toor -p 3306:3306 mysql:latest
+docker run -d --name mysql-container --network mynetwork -e MYSQL_ROOT_PASSWORD=toor -p 3306:3306 mysql:latest --restart=always
 
 ```
 
 ```bash
-docker run -d --name phpmyadmin-container --network mynetwork -e PMA_HOST=mysql-container -e PMA_PORT=3306 -p 8080:80 phpmyadmin/phpmyadmin:latest
+docker run -d --name phpmyadmin-container --network mynetwork -e PMA_HOST=mysql-container -e PMA_PORT=3306 -p 8080:80 phpmyadmin/phpmyadmin:latest --restart=always
 ```
 
 # Installing PostGres and PGAdmin
 ```bash
-docker run -d --name postgres-container --network mynetwork -e POSTGRES_PASSWORD=toor -p 5432:5432 postgres:latest
+docker run -d --name postgres-container --network mynetwork -e POSTGRES_PASSWORD=toor -p 5432:5432 postgres:latest --restart=always
 ```
 
 ```bash
-docker run -d --name pgadmin-container --network mynetwork -e PGADMIN_DEFAULT_EMAIL=admin@example.com -e PGADMIN_DEFAULT_PASSWORD=yourpassword -p 8080:80 dpage/pgadmin4:latest
+docker run -d --name pgadmin-container --network mynetwork -e PGADMIN_DEFAULT_EMAIL=admin@example.com -e PGADMIN_DEFAULT_PASSWORD=yourpassword -p 8080:80 dpage/pgadmin4:latest --restart=always
 ```
 
 
 # Installing Redis 
 ```bash
-docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest --restart=always
 ```
 
 
 # Installing Mailpit
 ```bash
-docker run -d --name=mailpit-container -p 8025:8025 -p 1025:1025 axllent/mailpit
+docker run -d --name=mailpit-container -p 8025:8025 -p 1025:1025 axllent/mailpit --restart=always
 ```
 
 # Installing MongoDB
 ```bash
-docker run --name mongodb -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=toor mongo
+docker run --name mongodb -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=toor mongo --restart=always
 ```
 
 # Installing MSSQL
 ```base
-docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourStrongPassword123" -p 1433:1433 --name mssql-server -d mcr.microsoft.com/mssql/server:2022-latest
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourStrongPassword123" -p 1433:1433 --name mssql-server -d mcr.microsoft.com/mssql/server:2022-latest --restart=always
 ```
 
 # MinIO
-```bash
-docker run -p 9002:9000 -p 9001:9001 --name minio -e "MINIO_ROOT_USER=minioadmin" -e "MINIO_ROOT_PASSWORD=minioadmin" minio/minio server /data --console-address ":9001"
+```bash 
+docker run -p 9002:9000 -p 9001:9001 --name minio -e "MINIO_ROOT_USER=minioadmin" -e "MINIO_ROOT_PASSWORD=minioadmin" minio/minio server /data --console-address ":9001" --restart=always
 ```

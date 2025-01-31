@@ -70,3 +70,8 @@ docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=dOlSPCCdM04FWDnx" -p 1433:1433 --n
 ```bash 
 docker run -p 9002:9000 -p 9001:9001 --name minio -e "MINIO_ROOT_USER=minioadmin" -e "MINIO_ROOT_PASSWORD=minioadmin" minio/minio server /data --console-address ":9001" --restart=always
 ```
+
+# NATS 
+```bash
+docker run -d --name nats-server -p 4222:4222 -p 8222:8222 -e NATS_USER=desha -e NATS_PASS=desha nats:latest -js --auth desha
+```

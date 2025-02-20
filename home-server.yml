@@ -1,0 +1,218 @@
+networks:
+  hs:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.14.4.0/24
+
+services:
+  # =====================================
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    networks:
+      hs:
+    command: --no-analytics
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /mnt/srv/docker/containers/portainer:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 8010:9000
+      - 8000:8100
+      - 9443:9443
+    restart: always
+  # =====================================
+
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    restart: unless-stopped
+    volumes:
+      - /mnt/srv/docker/containers/jellyfin:/config
+      - /mnt/hdd0/Media/Series:/tv
+      - /mnt/hdd0/Media/Movies:/movies
+      - /mnt/hdd0/Media/Music:/music
+      - /mnt/hdd0/Media/Quran:/Quran
+      - /mnt/hdd0/Media/Plays:/Plays
+
+    ports:
+      - "8020:8096"
+      - "8021:8920"
+    networks:
+      - hs
+  # =====================================
+
+  adguard:
+    image: adguard/adguardhome:latest
+    restart: unless-stopped
+    container_name: adguard
+    ports:
+      - 53:53/udp
+      - 67:67/udp
+      # - 68:68/tcp
+      # - 68:68/udp
+      - 8030:8080/tcp
+      # - 443:4430/tcp
+      - 853:853/tcp
+      - 4000:3000/tcp
+    volumes:
+      - /mnt/srv/docker/containers/adguard_home/work:/opt/adguardhome/work
+      - /mnt/srv/docker/containers/adguard_home/conf:/opt/adguardhome/conf
+      - /mnt/srv/docker/containers/adguard_home/filters:/opt/adguardhome/filters
+    networks:
+      - hs
+
+  # =====================================
+  nextcloud:
+    image: nextcloud:latest
+    container_name: nextcloud
+    user: 1000:1000
+    networks:
+      - hs
+    links:
+      - nextcloud-db
+    hostname: cloud.home.io
+    environment:
+      - PUID=33
+      - PGID=33
+      - TZ=Africa/Cairo
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud
+      - POSTGRES_HOST=nextcloud-db
+      - NEXTCLOUD_TRUSTED_DOMAINS=localhost nextcloud 192.168.1.200:8085 cloud.home.io *.home.io
+      - NEXTCLOUD_ADMIN_USER=desha
+      - NEXTCLOUD_ADMIN_PASSWORD=2612
+      # - NEXTCLOUD_DATA_DIR=/var/www/html/data # if you need to change data folder
+    volumes:
+      - /mnt/srv/docker/containers/nextcloud/html:/var/www/html
+      - /mnt/srv/docker/data/nc-data:/var/www/html/data
+    ports:
+      - 8040:80
+    restart: unless-stopped
+  #--------------------------------------
+  nextcloud-db:
+    image: postgres:15
+    container_name: nextcloud-db
+    user: 1000:1000
+    networks:
+      - hs
+    environment:
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=nextcloud
+      - POSTGRES_DB=nextcloud
+    volumes:
+      - /mnt/srv/docker/containers/nextcloud/db:/var/lib/postgresql/data
+      - /mnt/srv/docker/containers/nextcloud/db-backup:/var/lib/postgresql/backup
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+
+  # =====================================
+  pyload:
+    image: lscr.io/linuxserver/pyload-ng:latest
+    container_name: pyload
+    networks:
+      - hs
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Africa/Cairo
+    volumes:
+      - /mnt/srv/docker/containers/pyload:/config
+      - /mnt/hdd0/share/downloads:/downloads
+    ports:
+      - 8050:8000
+      - 9666:9666 #optional
+    restart:
+      unless-stopped
+
+      # =====================================
+  npm:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: npm
+    networks:
+      - hs
+    environment:
+      - DISABLE_IPV6=true # Uncomment this if IPv6 is not enabled on your host
+      - TZ=Africa/Cairo
+    volumes:
+      - /mnt/srv/docker/containers/npm/data:/data
+      - /mnt/srv/docker/containers/npm/letsencrypt:/etc/letsencrypt
+    ports:
+      - 80:80
+      - 443:443
+      - 81:81
+    restart:
+      always
+
+      # =====================================
+  filebrowser:
+    image: docker.io/filebrowser/filebrowser:v2
+    container_name: filebrowser
+    networks:
+      - hs
+    user: 1000:1000
+    volumes:
+      - /mnt/srv/docker/containers/filebrowser/data:/data
+      - /mnt/srv:/data/srv
+      - /mnt/hdd0:/data/disk1
+      - /home/desha:/data/home
+      - /mnt/srv/docker/containers/filebrowser/config/database.db:/database.db
+      - /mnt/srv/docker/containers/filebrowser/config/settings.json:/.filebrowser.json
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 8060:80
+    restart: unless-stopped
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: always
+    networks:
+      - hs
+    environment:
+      TZ: Africa/Cairo
+    ports:
+      - 8080:3000
+    volumes:
+      - /mnt/srv/docker/containers/homepage/config:/app/config
+      - /mnt/srv:/disk1
+      - /mnt/hdd0:/disk2
+      - /var/run/docker.sock:/var/run/docker.sock
+
+        # =====================================
+
+  netalertx:
+    image: jokobsk/netalertx:latest
+    container_name: netalertx
+    mem_limit: 4g
+    volumes:
+      - /mnt/srv/docker/containers/netalert/config:/app/config:rw
+      - /mnt/srv/docker/containers/netalert/db:/app/db:rw
+      - /mnt/srv/docker/containers/netalert/front/log:/app/front/log:rw
+    environment:
+      TZ: Africa/Cairo
+      PORT: 17811
+    network_mode: host
+    restart: unless-stopped
+
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    restart: unless-stopped
+    ports:
+      - "8090:8443"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Africa/Cairo
+      - PASSWORD=2612
+      # - SUDO_PASSWORD= # (optional, use to enable sudo access)
+    volumes:
+      - /mnt/srv/docker/containers/code-server/config:/config
+      - /mnt/srv/docker/containers/code-server/workspace:/workspace
+      - /mnt/srv/Work:/Work
